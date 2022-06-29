@@ -1,4 +1,4 @@
-package com.example.soapservice;
+package ru.kyazimov.soapservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

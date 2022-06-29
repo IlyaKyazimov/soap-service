@@ -1,4 +1,4 @@
-package com.example.soapservice;
+package ru.kyazimov.soapservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
