@@ -1,15 +1,20 @@
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://soapservice.kyazimov.ru/users-ws"
-           targetNamespace="http://soapservice.kyazimov.ru/users-ws" elementFormDefault="qualified">
+# SOAP web services using Spring Boot
 
-    <xs:element name="getUserByLoginRequest">
+## API documentation
+### /getUserByLogin
+Request:
+```xml  
+<xs:element name="getUserByLoginRequest">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="login" type="xs:string" />
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-
-    <xs:element name="getUserByLoginResponse">
+```   
+Response:
+```xml  
+<xs:element name="getUserByLoginResponse">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="login" type="xs:string" />
@@ -19,47 +24,42 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+```   
+### /getAllUsers
+Request:
+```xml
 
-    <xs:element name="getAllUsersRequest">
-        <xs:complexType>
+<xs:element name="getAllUsersRequest">
+  <xs:complexType>
 
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="getAllUsersResponse">
+  </xs:complexType>
+</xs:element>
+```   
+Response:
+```xml  
+<xs:element name="getAllUsersResponse">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="users" type="xs:string" maxOccurs="unbounded" />
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+```  
 
-    <xs:element name="addUserRequest">
+### /addUser
+Request:
+```xml  
+<xs:element name="addUserRequest">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="users" type="tns:users" />
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-
-    <xs:element name="addUserResponse">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="users" type="tns:users" />
-                <xs:element name="message" type="xs:string" />
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="updateUserByLoginRequest">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="users" type="tns:users" />
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="updateUserByLoginResponse">
+```  
+Response:
+```xml  
+<xs:element name="addUserResponse">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="users" type="tns:users" />
@@ -67,36 +67,50 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+```  
 
-    <xs:element name="deleteUserByLoginRequest">
+### /updateUserByLogin
+Request:
+```xml  
+<xs:element name="updateUserByLoginRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="users" type="tns:users" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+```  
+Response:
+```xml  
+<xs:element name="updateUserByLoginResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="users" type="tns:users" />
+                <xs:element name="message" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+```  
+### /deleteUserByLogin
+Request:
+```xml  
+<xs:element name="deleteUserByLoginRequest">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="login" type="xs:string" />
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-
-    <xs:element name="deleteUserByLoginResponse">
+```  
+Response:
+```xml  
+<xs:element name="deleteUserByLoginResponse">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="message" type="xs:string" />
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-
-    <xs:complexType name="users">
-        <xs:sequence>
-            <xs:element name="login" type="xs:string" />
-            <xs:element name="name" type="xs:string" />
-            <xs:element name="password" type="xs:string" />
-            <xs:element name="roleID" type="xs:int" maxOccurs="unbounded"/>
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="roles">
-        <xs:sequence>
-            <xs:element name="id" type="xs:int" />
-            <xs:element name="name" type="xs:string" />
-        </xs:sequence>
-    </xs:complexType>
-
-</xs:schema>
+```  
+### Data Base diagrams
+<img src="https://ibb.co/9GZXCz9" alt="soap-service_db_diagrams">
