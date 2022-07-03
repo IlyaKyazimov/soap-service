@@ -11,6 +11,7 @@ import org.springframework.ws.transport.http.MessageDispatcherServlet;
 import org.springframework.ws.wsdl.wsdl11.DefaultWsdl11Definition;
 import org.springframework.xml.xsd.SimpleXsdSchema;
 import org.springframework.xml.xsd.XsdSchema;
+import ru.kyazimov.soapservice.endpoint.UserEndpoint;
 
 @EnableWs
 @Configuration
@@ -25,17 +26,17 @@ public class SoapServiceConfig extends WsConfigurerAdapter {
     }
 
     @Bean(name = "users")
-    public DefaultWsdl11Definition defaultWsdl11Definition(XsdSchema usersSchema) {
+    public DefaultWsdl11Definition defaultWsdl11Definition(XsdSchema schema) {
         DefaultWsdl11Definition wsdl11Definition = new DefaultWsdl11Definition();
         wsdl11Definition.setPortTypeName("UsersPort");
         wsdl11Definition.setLocationUri("/ws");
-        wsdl11Definition.setTargetNamespace("http://soapservice.kyazimov.ru");
-        wsdl11Definition.setSchema(usersSchema);
+        wsdl11Definition.setTargetNamespace(UserEndpoint.NAMESPACE_URI);
+        wsdl11Definition.setSchema(schema);
         return wsdl11Definition;
     }
 
     @Bean
     public XsdSchema usersSchema() {
-        return new SimpleXsdSchema(new ClassPathResource("users.xsd"));
+        return new SimpleXsdSchema(new ClassPathResource("/xsd/users.xsd"));
     }
 }
