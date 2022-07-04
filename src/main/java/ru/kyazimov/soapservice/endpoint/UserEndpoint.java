@@ -8,9 +8,6 @@ import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 import ru.kyazimov.soapservice.entity.Role;
 import ru.kyazimov.soapservice.entity.User;
-import ru.kyazimov.soapservice.exception.EmptyDataException;
-import ru.kyazimov.soapservice.exception.InvalidDataException;
-import ru.kyazimov.soapservice.exception.InvalidPasswordException;
 import ru.kyazimov.soapservice.gs_ws.*;
 import ru.kyazimov.soapservice.service.RoleService;
 import ru.kyazimov.soapservice.service.UserService;
@@ -20,6 +17,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static ru.kyazimov.soapservice.validation.UserValidation.*;
 
 @Endpoint
 public class UserEndpoint {
@@ -38,31 +37,17 @@ public class UserEndpoint {
     @ResponsePayload
     public AddUserResponse addUser(@RequestPayload AddUserRequest request) {
         AddUserResponse response = new AddUserResponse();
-
-        if (!(userService.getUserByLogin(request.getUsers().getLogin()) == null)) {
-            throw new InvalidDataException("User with login " + request.getUsers().getLogin() + " already exists", "user already exists");
-        }
-
+        isUserAlreadyExist(userService.getUserByLogin(request.getUsers().getLogin()));
         User user = new User();
-        if (request.getUsers().getLogin().length() == 0 || request.getUsers().getPassword().length() == 0 || request.getUsers().getName().length() == 0) {
-            throw new EmptyDataException("Fields name, login and password cannot be empty", "invalid data");
-        }
-
-        if (!request.getUsers().getPassword().matches(".*\\d+.*") || !request.getUsers().getPassword().matches(".*[A-Z].*")) {
-            throw new InvalidPasswordException("Password should contain an uppercase letter and a number", "invalid password");
-        }
-
+        userValidation(request.getUsers().getLogin(), request.getUsers().getPassword(), request.getUsers().getName());
         user.setLogin(request.getUsers().getLogin());
         user.setName(request.getUsers().getName());
         user.setPassword(request.getUsers().getPassword());
         Set<ru.kyazimov.soapservice.entity.Role> roleSet = new HashSet<>();
-
         request.getUsers().getRoleID()
                 .forEach(id -> roleSet.add(roleService.getRoleById(id)));
         user.setRoles(roleSet);
-
         userService.addUser(user);
-
         response.setMessage("User has been created successfully");
 
         return response;
@@ -71,23 +56,16 @@ public class UserEndpoint {
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "getUserByLoginRequest")
     @ResponsePayload
     public GetUserByLoginResponse getUserByLogin(@RequestPayload GetUserByLoginRequest request) {
-        if (userService.getUserByLogin(request.getLogin()) == null) {
-            throw new InvalidDataException("User with login " + request.getLogin() + " does not exists", "user does not exists");
-        }
-
+        isUserExist(userService.getUserByLogin(request.getLogin()));
         GetUserByLoginResponse response = new GetUserByLoginResponse();
         Users user = new Users();
-
         BeanUtils.copyProperties(userService.getUserByLogin(request.getLogin()), user);
         response.setLogin(user.getLogin());
         response.setName(user.getName());
         response.setPassword(user.getPassword());
-
         List<String> roleList = new ArrayList<>();
-
         userService.getUserByLogin(request.getLogin()).getRoles()
                 .forEach(role -> roleList.add(role.getName()));
-
         response.getRoles().addAll(roleList);
 
         return response;
@@ -96,18 +74,8 @@ public class UserEndpoint {
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "updateUserByLoginRequest")
     @ResponsePayload
     public UpdateUserByLoginResponse updateUser(@RequestPayload UpdateUserByLoginRequest request) {
-        if (userService.getUserByLogin(request.getUsers().getLogin()) == null) {
-            throw new InvalidDataException("User with login " + request.getUsers().getLogin() + " does not exists", "user does not exists");
-        }
-
-        if (request.getUsers().getLogin().length() == 0 || request.getUsers().getPassword().length() == 0 || request.getUsers().getName().length() == 0) {
-            throw new EmptyDataException("Fields login, name and password cannot be empty", "invalid data");
-        }
-
-        if (!request.getUsers().getPassword().matches(".*\\d+.*") || !request.getUsers().getPassword().matches(".*[A-Z].*")) {
-            throw new InvalidPasswordException("Password should contain an uppercase letter and a number", "invalid password");
-        }
-
+        isUserExist(userService.getUserByLogin(request.getUsers().getLogin()));
+        userValidation(request.getUsers().getLogin(), request.getUsers().getPassword(), request.getUsers().getName());
         UpdateUserByLoginResponse response = new UpdateUserByLoginResponse();
         Users data = request.getUsers();
 
@@ -140,18 +108,15 @@ public class UserEndpoint {
         listUsers.forEach(users -> result.add(users.getName()));
         GetAllUsersResponse response = new GetAllUsersResponse();
         response.getUsers().addAll(result);
+
         return response;
     }
 
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "deleteUserByLoginRequest")
     @ResponsePayload
     public DeleteUserByLoginResponse deleteUserByLogin(@RequestPayload DeleteUserByLoginRequest request) {
-        if (userService.getUserByLogin(request.getLogin()) == null) {
-            throw new InvalidDataException("User with login " + request.getLogin() + " does not exists", "user does not exists");
-        }
-
+        isUserExist(userService.getUserByLogin(request.getLogin()));
         DeleteUserByLoginResponse response = new DeleteUserByLoginResponse();
-
         userService.deleteUserByLogin(request.getLogin());
         response.setMessage("User with login: " + request.getLogin() + " was deleted successfully");
 
