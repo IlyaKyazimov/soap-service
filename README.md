@@ -112,5 +112,5 @@ Response:
         </xs:complexType>
     </xs:element>
 ```  
-### Data Base diagrams
+### Database diagrams
 <img src="https://i.ibb.co/fQDRPBY/2022-07-04-01-18-34.png" alt="soap-service_db_diagrams">
